@@ -13,10 +13,26 @@
 
 
 <body>
-
+   
+   
     <p>Space-Game</p>
    
-    <canvas id="GameCanvas" width="1250" height="495" style="border:2px solid silver" >This is a Canvas For Space Game </canvas>
+    <div id="Game-Container" style="position: absolute; top: 15%; left:0%; width: 1240; height: 480;"> 
+     
+      <canvas id="GameCanvas" width="1240" height="480" style="border:10px solid silver" >
+        This is a Canvas For Space Game 
+      </canvas>
+
+      <button id="sound"></button>
+
+    <div id="startScreen">
+        <p id="startText">
+            🚀 Prepare For Launch! Click to Start!
+        </p>
+
+    </div>
+
+     </div>
         
     <script src="script.js"></script>
 
