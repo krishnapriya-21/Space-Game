@@ -1,5 +1,6 @@
 p{
 
+    top: 5px;
     text-align: center;
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
@@ -7,3 +8,33 @@ p{
     
 }
 
+#startScreen{
+
+    position: absolute;
+    top:35%;
+    left: 25%;
+    width: 50%;
+    height: 25%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#startText{
+
+    font-size: 2em;
+    color:#fff;
+    animation: pulse 1.5s infinite;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+}
+
+@keyframes pulse{
+
+    0%{ opacity: 0.5;}
+    50%{ opacity: 1; transform: scale(1.1);}
+    100%{ opacity: 0.5;}
+
+}
