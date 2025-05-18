@@ -4,74 +4,85 @@
 */
 
 
-
 // Declaring Canvas and setting Context to 2d to draw images
 
 const canvas= document.getElementById("GameCanvas");
 const ctx= canvas.getContext("2d");
 
-// To control Game start
+
+
+// Game control Variables
 let gameStarted= false;
+let video;
+// Sound Icon as image Initialization
+const soundButton= new Image();
+let videoReady= false; // Flag for video loading
+let player,enemyShip,life; // Game Assets
 
 
-
-// Function to Display Game Canvas
+// Function to Initialize Game Canvas
 
 async function Display(){
          
 
-    //Clearing Canvas before Display
-
     ctx.clearRect(0,0,canvas.width,canvas.height);
- 
+    
+  // Loading assets in parallel before starting the game loop
+    await  backgroundVideo();
+
+    // Draw Video
+     drawVideoFrame();
+
+    // Loading Game Assets
+    player= await AssetsImageLoad('spaceArt/player.png');
+    enemyShip= await AssetsImageLoad('spaceArt/enemyShip.png');
+    life=await AssetsImageLoad('spaceArt/life.png');
+
    
-    // Calling Start Game
+    // Background Sound and Icon 
+      await backgroundAudio();
+      drawSoundIcon();
+
 
     StartGameFrame();
 
+    gameloop(); // Begin Main game Loop
+                   
+}
 
-    // Drawing player and enemyship upon game start
+// Main Game Loop
 
-    const player= await AssetsImageLoad('spaceArt/player.png');
-    const enemyShip= await AssetsImageLoad('spaceArt/enemyShip.png');
+async function gameloop(){
 
-    if (gameStarted) {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        DrawFrameGameAssets(player,enemyShip);
+
+     // Draw background Video if it is ready
+   
+    if (videoReady){
+    // Draw Video Frame
+        drawVideoFrame();
+    // Draw Sound Icon
+     drawSoundIcon();
+    }
+
+      // Draw game assets only after game starts
+    if (gameStarted){
+        drawFramePlayer(player);
+        drawFrameEnemy(enemyShip);
+        drawFrameLife(life);
 
     }
-    
-                  
+
+    requestAnimationFrame(gameloop);
+
 }
 
 
-/* Function for Initial Game Screen
-* Background Video Initialize
-* Background Audio Image Initialize
-* Background Audio Play Initialize
-* Game Start Text Initialize
-*/
 
+/* Function for Initial Game Screen*/
 
  async function StartGameFrame(){
-
-
-    // Calling Background Video Element
-
-    await backgroundVideo().then(()=>{
-        console.log("Background video started successfully");
-    }).catch(err=>{
-        console.log("video playbackissue", err);
-    });
-
-     
-    // Calling Background audio Element
-
-    await backgroundAudio().then(()=>{
-        console.log("Background audio started successfully");
-    }).catch(err=>{
-        console.log("Audio playback issue",err);
-    });
 
 
     // Calling Start Screen Text Element
@@ -86,40 +97,35 @@ async function Display(){
  }
 
 
- // Function for Game Canvas Background Video
+ // Function to handle Background Video
 async function backgroundVideo(){
-
 
     return new Promise((resolve)=>{
 
-
      // Creating Video Element for Background using DOM
-     const video= document.createElement("video");
-
+     video= document.createElement("video");
      video.src= "spaceArt/Background/starry-background.mp4";
      video.playsinline= true;
      video.loop=true;
      video.muted=true; 
-    
-     //document.body.appendChild(video); // Video Element is in DOM
-
      video.play();
      video.addEventListener("canplaythrough",()=>{
-
-        function drawFrame(){
-            ctx.drawImage(video,0,0,canvas.width,canvas.height);
-           // drawSoundIcon(); // Redrawing Sound Icon Repeatedly after video Element 
-            requestAnimationFrame(drawFrame);
-         }
-         drawFrame();
-         resolve(); 
+        videoReady=true; // Set Flag when video is Ready
+        resolve(); 
      });
 
+    
     });
 }
 
+   function drawVideoFrame(){
 
-//Function for Game Canvas Background Audio with Sound Icon
+            ctx.drawImage(video,0,0,canvas.width,canvas.height);
+            requestAnimationFrame(drawVideoFrame);
+  }
+
+
+//Function to handle Background Audio with Sound Icon
  async function backgroundAudio(){
 
     return new  Promise((resolve)=>{
@@ -133,32 +139,20 @@ async function backgroundVideo(){
 
      // Variable Declaration
      let isplaying=false;
-
-     // Sound Icon as image Initialization
-     const soundButton= new Image();
      soundButton.src="spaceArt/Background/muteIcon.png";
-     soundButton.style.border="red solid 10px";
-
-
      
      // Icon Position
      const iconX=canvas.width-50;
      const iconY=20;
      const iconSize=30;
      
-     
-    function drawSoundIcon(){
-        ctx.drawImage(soundButton,iconX,iconY,iconSize,iconSize);
-    }
-   
-
-     //  Adding Sound Icon initially once image loads   
+        
+   // Loading sound Icon 
 
      soundButton.onload=()=>{
-
-        ctx.drawImage(soundButton,iconX,iconY,iconSize,iconSize);
-        resolve(); // Resolving after sound Image is Loaded
-    };   
+        drawSoundIcon();
+        resolve();
+      };   
     
       
      // Click Event Listener in Canvas for Toggling Sound
@@ -178,8 +172,6 @@ async function backgroundVideo(){
             // Changing state of Playing
             isplaying=!isplaying;
 
-            ctx.clearRect(iconX,iconY,iconSize,iconSize); // Clears Previous Icon
-
             // Updating  Sound Button
             soundButton.src= isplaying ? "spaceArt/Background/volumeIcon.png" : "spaceArt/Background/muteIcon.png";
            
@@ -197,52 +189,90 @@ async function backgroundVideo(){
  } 
 
 
+    function drawSoundIcon(){
+
+    // Icon Position
+     const iconX=canvas.width-50;
+     const iconY=20;
+     const iconSize=30;
+
+        ctx.clearRect(iconX,iconY,iconSize,iconSize);
+        ctx.drawImage(soundButton,iconX,iconY,iconSize,iconSize);
+        requestAnimationFrame(drawSoundIcon);
+    }
+
 
 // Function to load game images in canvas
  async function AssetsImageLoad(path){
 
     return new Promise((resolve)=>{
-
         const image= new Image();
         image.src=path;
-
         image.onload = () =>{
-
             resolve(image);
-
-        };
-        
+        }; 
 
     });
 }
 
 
-// Function for Player and EnemyShip Display
+// Function to control and Draw Enemy 
 
-function DrawFrameGameAssets(player,enemyShip){
+function drawFrameEnemy(enemyShip){
       
-
     const monsterCount=5;
     const monsterWidth= monsterCount*98;
     const monsterStart_X= (canvas.width-monsterWidth)/2;
     const monsterStop_X= monsterStart_X+monsterWidth;
-    
-    ctx.drawImage(player,(canvas.width-player.width)/2,(canvas.height-canvas.height/4));
-    
-
+      
+ 
      // Drawing 5*5 EnemyShips
-
      for (let x =monsterStart_X; x <monsterStop_X; x+=98){
-        for (let y=0; y<50*4; y+=50){
+        for (let y=0; y<50*5; y+=50){
             ctx.drawImage(enemyShip,x,y);
         }
-
      }
-
-     
 }
 
+// Function to control and draw Player
 
-// Trigger Display function when the game starts
+function drawFramePlayer(player){
+
+    ctx.drawImage(player,(canvas.width-player.width)/2,(canvas.height-canvas.height/4));
+
+}
+
+// Function to control and Draw Life
+function drawFrameLife(life){
+    
+    const lifecount=3;
+    const lifeSize=10;
+    const lifeSpace= 30;
+    const lifeStartX= (canvas.width-canvas.width/4)+60;
+    const lifeStartY= (canvas.height-canvas.height/4)+35;
+  
+
+    for (let i=0;i<lifecount;i++) {
+       
+            ctx.drawImage(life,lifeStartX+(i*(lifeSize+lifeSpace)),lifeStartY);
+                  
+    }
+    
+
+}
+
+//Function to Control and Display Score
+
+//function drawScore(){
+
+    //const score=0;
+    //const 
+
+
+//}
+
+
+// Trigger Display when game Loads
 
 window.addEventListener("DOMContentLoaded",Display);
+
