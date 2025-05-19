@@ -1,15 +1,15 @@
 /* Space-Game
 * Welcome Panel
-* Game Player and Enemy Panel
+* BackGround Audio, Sound Icon, Video
+* Game Player and Enemy 
+* Score Count
+* Lives Count
 */
 
 
 // Declaring Canvas and setting Context to 2d to draw images
-
 const canvas= document.getElementById("GameCanvas");
 const ctx= canvas.getContext("2d");
-
-
 
 // Game control Variables
 let gameStarted= false;
@@ -21,53 +21,44 @@ let player,enemyShip,life; // Game Assets
 let score=0; 
 
 
-// Function to Initialize Game Canvas
-
+// Function to Control Game Canvas Display 
 async function Display(){
          
-
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
-  // Loading assets in parallel before starting the game loop
+    // Loading assets in parallel before starting the game loop
     await  backgroundVideo();
 
     // Draw Video
-     drawVideoFrame();
+    drawVideoFrame();
 
     // Loading Game Assets
     player= await AssetsImageLoad('spaceArt/player.png');
     enemyShip= await AssetsImageLoad('spaceArt/enemyShip.png');
     life=await AssetsImageLoad('spaceArt/life.png');
-
    
     // Background Sound and Icon 
-      await backgroundAudio();
-      drawSoundIcon();
-
-
+     await backgroundAudio();
+     drawSoundIcon();
     StartGameFrame();
-
     gameloop(); // Begin Main game Loop
                    
 }
 
-// Main Game Loop
-
+// Function to Control Main Game Loop
 async function gameloop(){
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-
-     // Draw background Video if it is ready
-   
+    // Draw background Video if it is ready
     if (videoReady){
-    // Draw Video Frame
+        // Draw Video Frame
         drawVideoFrame();
-    // Draw Sound Icon
-     drawSoundIcon();
+        // Draw Sound Icon
+        drawSoundIcon();
     }
 
-      // Draw game assets only after game starts
+    // Draw game assets only after game starts
     if (gameStarted){
         drawFramePlayer(player);
         drawFrameEnemy(enemyShip);
@@ -81,18 +72,17 @@ async function gameloop(){
 
 
 
-/* Function for Initial Game Scre en*/
-
+// Function to Control Initial Game Screen
  async function StartGameFrame(){
 
 
-    // Calling Start Screen Text Element
+   // Calling Start Screen Text Element
    const startScreen= document.getElementById("startScreen");
 
    startScreen.addEventListener("click",()=>
    {
-    startScreen.style.display="none";
-    gameStarted=true;
+        startScreen.style.display="none";
+        gameStarted=true;
    });
              
  }
@@ -103,22 +93,23 @@ async function backgroundVideo(){
 
     return new Promise((resolve)=>{
 
-     // Creating Video Element for Background using DOM
-     video= document.createElement("video");
-     video.src= "spaceArt/Background/starry-background.mp4";
-     video.playsinline= true;
-     video.loop=true;
-     video.muted=true; 
-     video.play();
-     video.addEventListener("canplaythrough",()=>{
-        videoReady=true; // Set Flag when video is Ready
-        resolve(); 
-     });
+        // Creating Video Element for Background using DOM
+        video= document.createElement("video");
+        video.src= "spaceArt/Background/starry-background.mp4";
+        video.playsinline= true;
+        video.loop=true;
+        video.muted=true; 
+        video.play();
+        video.addEventListener("canplaythrough",()=>{
+            videoReady=true; // Set Flag when video is Ready
+            resolve(); 
+        });
 
     
     });
 }
 
+// Function to Draw Video Frame
    function drawVideoFrame(){
 
             ctx.drawImage(video,0,0,canvas.width,canvas.height);
@@ -126,7 +117,7 @@ async function backgroundVideo(){
   }
 
 
-//Function to handle Background Audio with Sound Icon
+// Function to handle Background Audio with Sound Icon
  async function backgroundAudio(){
 
     return new  Promise((resolve)=>{
@@ -189,7 +180,7 @@ async function backgroundVideo(){
     });
  } 
 
-
+// Function to Draw Sound Icon
     function drawSoundIcon(){
 
     // Icon Position
@@ -218,7 +209,6 @@ async function backgroundVideo(){
 
 
 // Function to control and Draw Enemy 
-
 function drawFrameEnemy(enemyShip){
       
     const monsterCount=5;
@@ -236,7 +226,6 @@ function drawFrameEnemy(enemyShip){
 }
 
 // Function to control and draw Player
-
 function drawFramePlayer(player){
 
     ctx.drawImage(player,(canvas.width-player.width)/2,(canvas.height-canvas.height/4));
@@ -258,8 +247,7 @@ function drawFrameLife(life){
     }
 }
 
-//Function to Control and Display Score
-
+// Function to Control and Display Score
 function drawScore(){    
 
      
@@ -274,8 +262,6 @@ function drawScore(){
   
 }
 
-
 // Trigger Display when game Loads
-
 window.addEventListener("DOMContentLoaded",Display);
 
