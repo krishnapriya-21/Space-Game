@@ -18,6 +18,7 @@ let video;
 const soundButton= new Image();
 let videoReady= false; // Flag for video loading
 let player,enemyShip,life; // Game Assets
+let score=0; 
 
 
 // Function to Initialize Game Canvas
@@ -71,7 +72,7 @@ async function gameloop(){
         drawFramePlayer(player);
         drawFrameEnemy(enemyShip);
         drawFrameLife(life);
-
+        drawScore();
     }
 
     requestAnimationFrame(gameloop);
@@ -80,7 +81,7 @@ async function gameloop(){
 
 
 
-/* Function for Initial Game Screen*/
+/* Function for Initial Game Scre en*/
 
  async function StartGameFrame(){
 
@@ -248,28 +249,30 @@ function drawFrameLife(life){
     const lifecount=3;
     const lifeSize=10;
     const lifeSpace= 30;
-    const lifeStartX= (canvas.width-canvas.width/4)+60;
+    const lifeStartX= (canvas.width-canvas.width/4)+100;
     const lifeStartY= (canvas.height-canvas.height/4)+35;
   
 
     for (let i=0;i<lifecount;i++) {
-       
-            ctx.drawImage(life,lifeStartX+(i*(lifeSize+lifeSpace)),lifeStartY);
-                  
+        ctx.drawImage(life,lifeStartX+(i*(lifeSize+lifeSpace)),lifeStartY);
     }
-    
-
 }
 
 //Function to Control and Display Score
 
-//function drawScore(){
+function drawScore(){    
 
-    //const score=0;
-    //const 
+     
+    const scoreStartX= (canvas.width-canvas.width/2)-550;
+    const scoreStartY= (canvas.height-canvas.height/4)+ 60;
 
-
-//}
+    ctx.fillStyle="rgba(0,0,0,0.5)";
+    ctx.fillRect(10,10,150,40);
+    ctx.fillStyle="white";
+    ctx.font=" bold 30px Arial"; 
+    ctx.fillText("Score: " + score, scoreStartX,scoreStartY);
+  
+}
 
 
 // Trigger Display when game Loads
