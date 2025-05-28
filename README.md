@@ -102,4 +102,5 @@ A classic 2D space shooter game built with HTML5 Canvas and JavaScript. Navigate
 *   Refactor `setInterval` based movements in `Enemy` and `Laser` classes to be driven by the main game loop for better synchronization and control.
 
 ---
+<img width="972" alt="Space-Game" src="https://github.com/user-attachments/assets/20ec0475-da27-4619-87ae-c8bf985c0ae6" />
 
